@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Image Transmission</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>SecureImage</h1>
+        
+        <div class="glass-panel">
+            <!-- Send Tab -->
+            <div id="tab-send" class="tab-content active">
+                <form id="sendForm">
+                    <div class="form-group">
+                        <label for="secretImage">1. Select Secret Image to Send</label>
+                        <input type="file" id="secretImage" accept="image/*" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">2. Encryption Password</label>
+                        <input type="password" id="password" required placeholder="Make it strong!">
+                    </div>
+                    
+                    <button type="submit" id="sendBtn">Encrypt & Generate QR</button>
+
+                    
+                    <div id="sendLoader" class="loader">Processing... (Encrypting in browser)</div>
+                </form>
+                
+                <div id="sendResult" class="result">
+                    <p style="margin-bottom: 1rem; color: #cbd5e1;">Your encrypted image is ready!</p>
+                    <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #94a3b8;">Share this QR code with the recipient.</p>
+                    <img id="qrPreview" src="" alt="Generated QR Code" style="max-width: 250px;">
+                    <br>
+                    <a id="downloadQr" href="#" class="result-link" download="secure_qr_code.png">Download QR Code</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="{{ url_for('static', filename='js/crypto.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

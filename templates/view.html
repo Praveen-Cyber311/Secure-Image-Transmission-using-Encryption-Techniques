@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureImage - View Secret</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>View Secret Image</h1>
+        
+        <div class="glass-panel">
+            {% if error %}
+            <div class="error-message">
+                {{ error }}
+            </div>
+            {% else %}
+            
+            <div id="decryptSection">
+                <p style="margin-bottom: 1.5rem; color: #cbd5e1; text-align: center;">This image is encrypted. Enter the password to unlock it.</p>
+                
+                <form id="decryptForm">
+                    <input type="hidden" id="imageId" value="{{ image_id }}">
+                    <div class="form-group">
+                        <label for="decryptPassword">Password</label>
+                        <input type="password" id="decryptPassword" required placeholder="Enter password...">
+                    </div>
+                    
+                    <button type="submit" id="decryptBtn">Decrypt & View</button>
+                    
+                    <div id="decryptLoader" class="loader">Decrypting...</div>
+                </form>
+                
+                <div id="decryptError" class="error-message" style="display: none; margin-top: 1rem;">
+                    Invalid password or corrupted file.
+                </div>
+            </div>
+            
+            <div id="viewSection" class="result">
+                <p style="margin-bottom: 1rem; color: #10b981; font-weight: 600;">Successfully Decrypted!</p>
+                <img id="decryptedImage" src="" alt="Secret Image">
+            </div>
+            
+            {% endif %}
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="{{ url_for('static', filename='js/crypto.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const decryptForm = document.getElementById('decryptForm');
+            if(!decryptForm) return;
+            
+            const btn = document.getElementById('decryptBtn');
+            const loader = document.getElementById('decryptLoader');
+            const errorDiv = document.getElementById('decryptError');
+            const viewSection = document.getElementById('viewSection');
+            const decryptSection = document.getElementById('decryptSection');
+            const img = document.getElementById('decryptedImage');
+            
+            decryptForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const password = document.getElementById('decryptPassword').value;
+                const imageId = document.getElementById('imageId').value;
+                
+                btn.disabled = true;
+                loader.style.display = 'block';
+                errorDiv.style.display = 'none';
+                
+                try {
+                    // Fetch the encrypted blob from the server
+                    const res = await fetch(`/api/get_encrypted/${imageId}`);
+                    if (!res.ok) throw new Error("Image not found");
+                    
+                    const arrayBuffer = await res.arrayBuffer();
+                    
+                    // Decrypt in browser
+                    const blobUrl = await decryptImage(arrayBuffer, password);
+                    
+                    // Show image
+                    img.src = blobUrl;
+                    decryptSection.style.display = 'none';
+                    viewSection.style.display = 'block';
+                    
+                } catch (err) {
+                    console.error(err);
+                    errorDiv.style.display = 'block';
+                } finally {
+                    btn.disabled = false;
+                    loader.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

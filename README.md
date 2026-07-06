@@ -4,7 +4,7 @@ A modern, highly secure web application for transmitting images confidentially u
 
 ## Overview
 
-This project allows you to encrypt any image with a password entirely within your browser (using AES-GCM via CryptoJS). The server never sees your password or your unencrypted image. It then generates a unique QR code. When the recipient scans the QR code with their phone, they are taken to a secure portal where they can enter the password to instantly decrypt and view the image.
+This project allows you to encrypt any image with a password entirely within your browser (using AES-CBC via CryptoJS). The server never sees your password or your unencrypted image. It then generates a unique QR code. When the recipient scans the QR code with their phone, they are taken to a secure portal where they can enter the password to instantly decrypt and view the image.
 
 ## Features
 
